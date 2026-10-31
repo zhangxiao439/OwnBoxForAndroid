@@ -114,7 +114,7 @@ object Theme {
             // 自有主题没有夜间资源，夜间统一使用纯黑主题
             return R.style.Theme_SagerNet_Black
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
             val wallpaperColor = getSystemWallpaperColor(context)
             if (wallpaperColor != null) {
                 val closest = getClosestThemeForColor(wallpaperColor)
@@ -132,7 +132,7 @@ object Theme {
         if (id in OWN_THEMES && usingNightMode(context)) {
             return R.style.Theme_SagerNet_Dialog_Black
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
             val wallpaperColor = getSystemWallpaperColor(context)
             if (wallpaperColor != null) {
                 val closest = getClosestThemeForColor(wallpaperColor)
