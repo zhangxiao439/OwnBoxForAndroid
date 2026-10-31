@@ -6,12 +6,18 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.graphics.ColorUtils
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.getColorAttr
 
+/**
+ * 主题体系移植自 throneproj/ThroneForAndroid（SagerNet 系）：
+ * 恢复完整的 Material 色相主题（RED / PINK_SSR / PINK / PURPLE / DEEP_PURPLE / INDIGO /
+ * BLUE / LIGHT_BLUE / CYAN / TEAL / GREEN / LIGHT_GREEN / LIME / YELLOW / AMBER / ORANGE /
+ * DEEP_ORANGE / BROWN / GREY / BLUE_GREY / VERDANT_MINT），并保留 OwnBox 自有的
+ * 三套主题（BLACK 纯黑 / WHITE 纯白 / LIGHT_GRAY 浅灰，默认仍为浅灰）。
+ */
 object Theme {
 
     const val MONET = 0
@@ -40,6 +46,19 @@ object Theme {
     const val WHITE = 23
     const val LIGHT_GRAY = 24
     const val CUSTOM = 99
+
+    /** OwnBox 自有的三套主题：夜间模式统一回落到纯黑主题 */
+    private val OWN_THEMES = setOf(BLACK, WHITE, LIGHT_GRAY)
+
+    /** 全部合法的主题 ID（供设置界面校验与选择器使用） */
+    val VALID_THEMES: Set<Int> = COLOR_THEMES + OWN_THEMES
+
+    /** 可选的色相主题（与 Throne 一致） */
+    val COLOR_THEMES = setOf(
+        RED, PINK_SSR, PINK, PURPLE, DEEP_PURPLE, INDIGO, BLUE, LIGHT_BLUE, CYAN,
+        TEAL, GREEN, LIGHT_GREEN, LIME, YELLOW, AMBER, ORANGE, DEEP_ORANGE, BROWN,
+        GREY, BLUE_GREY, VERDANT_MINT
+    )
 
     private fun defaultTheme() = LIGHT_GRAY
 
@@ -90,10 +109,12 @@ object Theme {
     }
 
     fun getTheme(context: Context = app): Int {
-        if (usingNightMode(context)) {
+        val id = DataStore.appTheme
+        if (id in OWN_THEMES && usingNightMode(context)) {
+            // 自有主题没有夜间资源，夜间统一使用纯黑主题
             return R.style.Theme_SagerNet_Black
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
             val wallpaperColor = getSystemWallpaperColor(context)
             if (wallpaperColor != null) {
                 val closest = getClosestThemeForColor(wallpaperColor)
@@ -102,15 +123,16 @@ object Theme {
                 getTheme(MONET)
             }
         } else {
-            getTheme(DataStore.appTheme)
+            getTheme(id)
         }
     }
 
     fun getDialogTheme(context: Context = app): Int {
-        if (usingNightMode(context)) {
+        val id = DataStore.appTheme
+        if (id in OWN_THEMES && usingNightMode(context)) {
             return R.style.Theme_SagerNet_Dialog_Black
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && DataStore.useSystemTheme) {
             val wallpaperColor = getSystemWallpaperColor(context)
             if (wallpaperColor != null) {
                 val closest = getClosestThemeForColor(wallpaperColor)
@@ -119,35 +141,69 @@ object Theme {
                 getDialogTheme(MONET)
             }
         } else {
-            getDialogTheme(DataStore.appTheme)
+            getDialogTheme(id)
         }
     }
 
     fun getTheme(theme: Int): Int {
         return when (theme) {
+            MONET -> R.style.Theme_SagerNet_Monet
+            RED -> R.style.Theme_SagerNet_Red
+            PINK -> R.style.Theme_SagerNet
+            PINK_SSR -> R.style.Theme_SagerNet_Pink_SSR
+            PURPLE -> R.style.Theme_SagerNet_Purple
+            DEEP_PURPLE -> R.style.Theme_SagerNet_DeepPurple
+            INDIGO -> R.style.Theme_SagerNet_Indigo
+            BLUE -> R.style.Theme_SagerNet_Blue
+            LIGHT_BLUE -> R.style.Theme_SagerNet_LightBlue
+            CYAN -> R.style.Theme_SagerNet_Cyan
+            TEAL -> R.style.Theme_SagerNet_Teal
+            GREEN -> R.style.Theme_SagerNet_Green
+            LIGHT_GREEN -> R.style.Theme_SagerNet_LightGreen
+            LIME -> R.style.Theme_SagerNet_Lime
+            YELLOW -> R.style.Theme_SagerNet_Yellow
+            AMBER -> R.style.Theme_SagerNet_Amber
+            ORANGE -> R.style.Theme_SagerNet_Orange
+            DEEP_ORANGE -> R.style.Theme_SagerNet_DeepOrange
+            BROWN -> R.style.Theme_SagerNet_Brown
+            GREY -> R.style.Theme_SagerNet_Grey
+            BLUE_GREY -> R.style.Theme_SagerNet_BlueGrey
             BLACK -> R.style.Theme_SagerNet_Black
+            VERDANT_MINT -> R.style.Theme_SagerNet_VerdantMint
             WHITE -> R.style.Theme_SagerNet_White
             LIGHT_GRAY -> R.style.Theme_SagerNet_LightGray
-            else -> {
-                if (DataStore.appTheme !in setOf(BLACK, WHITE, LIGHT_GRAY)) {
-                    DataStore.appTheme = LIGHT_GRAY
-                }
-                R.style.Theme_SagerNet_LightGray
-            }
+            else -> getTheme(defaultTheme())
         }
     }
 
     fun getDialogTheme(theme: Int): Int {
         return when (theme) {
+            MONET -> R.style.Theme_SagerNet_Dialog_Monet
+            RED -> R.style.Theme_SagerNet_Dialog_Red
+            PINK -> R.style.Theme_SagerNet_Dialog
+            PINK_SSR -> R.style.Theme_SagerNet_Dialog_Pink_SSR
+            PURPLE -> R.style.Theme_SagerNet_Dialog_Purple
+            DEEP_PURPLE -> R.style.Theme_SagerNet_Dialog_DeepPurple
+            INDIGO -> R.style.Theme_SagerNet_Dialog_Indigo
+            BLUE -> R.style.Theme_SagerNet_Dialog_Blue
+            LIGHT_BLUE -> R.style.Theme_SagerNet_Dialog_LightBlue
+            CYAN -> R.style.Theme_SagerNet_Dialog_Cyan
+            TEAL -> R.style.Theme_SagerNet_Dialog_Teal
+            GREEN -> R.style.Theme_SagerNet_Dialog_Green
+            LIGHT_GREEN -> R.style.Theme_SagerNet_Dialog_LightGreen
+            LIME -> R.style.Theme_SagerNet_Dialog_Lime
+            YELLOW -> R.style.Theme_SagerNet_Dialog_Yellow
+            AMBER -> R.style.Theme_SagerNet_Dialog_Amber
+            ORANGE -> R.style.Theme_SagerNet_Dialog_Orange
+            DEEP_ORANGE -> R.style.Theme_SagerNet_Dialog_DeepOrange
+            BROWN -> R.style.Theme_SagerNet_Dialog_Brown
+            GREY -> R.style.Theme_SagerNet_Dialog_Grey
+            BLUE_GREY -> R.style.Theme_SagerNet_Dialog_BlueGrey
             BLACK -> R.style.Theme_SagerNet_Dialog_Black
+            VERDANT_MINT -> R.style.Theme_SagerNet_Dialog_VerdantMint
             WHITE -> R.style.Theme_SagerNet_Dialog_White
             LIGHT_GRAY -> R.style.Theme_SagerNet_Dialog_LightGray
-            else -> {
-                if (DataStore.appTheme !in setOf(BLACK, WHITE, LIGHT_GRAY)) {
-                    DataStore.appTheme = LIGHT_GRAY
-                }
-                R.style.Theme_SagerNet_Dialog_LightGray
-            }
+            else -> getDialogTheme(defaultTheme())
         }
     }
 
