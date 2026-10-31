@@ -50,15 +50,15 @@ object Theme {
     /** OwnBox 自有的三套主题：夜间模式统一回落到纯黑主题 */
     private val OWN_THEMES = setOf(BLACK, WHITE, LIGHT_GRAY)
 
-    /** 全部合法的主题 ID（供设置界面校验与选择器使用） */
-    val VALID_THEMES: Set<Int> = COLOR_THEMES + OWN_THEMES
-
     /** 可选的色相主题（与 Throne 一致） */
     val COLOR_THEMES = setOf(
         RED, PINK_SSR, PINK, PURPLE, DEEP_PURPLE, INDIGO, BLUE, LIGHT_BLUE, CYAN,
         TEAL, GREEN, LIGHT_GREEN, LIME, YELLOW, AMBER, ORANGE, DEEP_ORANGE, BROWN,
         GREY, BLUE_GREY, VERDANT_MINT
     )
+
+    /** 全部合法的主题 ID（供设置界面校验与选择器使用） */
+    val VALID_THEMES: Set<Int> = COLOR_THEMES + OWN_THEMES
 
     private fun defaultTheme() = LIGHT_GRAY
 
