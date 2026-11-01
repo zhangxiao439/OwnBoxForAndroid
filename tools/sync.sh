@@ -27,6 +27,23 @@ UPSTREAM="https://github.com/Own716/OwnBoxForAndroid.git"
 FORK="https://github.com/zhangxiao439/OwnBoxForAndroid.git"
 FEATURE_BRANCH="feature/throne-theme"
 
+# 自动定位 python / kotlinc（便携版），避免硬编码路径换机器就失效
+if [ -z "${PY:-}" ]; then
+  for c in python3 python; do
+    if command -v "$c" >/dev/null 2>&1; then PY="$c"; break; fi
+  done
+fi
+: "${PY:=python3}"
+
+if [ -z "${KOTLINC:-}" ]; then
+  for c in "$(command -v kotlinc 2>/dev/null)" \
+           /c/Users/Administrator/WorkBuddy/gh-work/kotlinc/kotlinc/bin/kotlinc.bat \
+           /c/Users/Administrator/WorkBuddy/gh-work/kotlinc/bin/kotlinc.bat; do
+    [ -n "$c" ] && [ -f "$c" ] && { KOTLINC="$c"; break; }
+  done
+fi
+export PY KOTLINC
+
 DO_PUSH=1
 DO_BUILD=1
 for arg in "$@"; do
@@ -63,8 +80,10 @@ ok "待同步提交数（相对 origin/main）: $COMMITS"
 say "2/5 让 fork 的 main 镜像上游 main"
 git checkout -q main
 git reset --hard upstream/main
-git branch -f main upstream/main 2>/dev/null
-ok "main 已对齐 upstream/main"
+# 注意：不能在已 checkout 的分支上用 `git branch -f`（会报
+# "cannot force update the branch used by worktree"）。reset --hard 已经对齐，
+# 分支指针本身就指向 upstream/main，无需额外操作。
+ok "main 已对齐 upstream/main ($(git rev-parse --short HEAD))"
 
 # ------------------------------------- 3. 把自己的分支 rebase 到最新上游
 say "3/5 rebase $FEATURE_BRANCH 到最新上游"
@@ -131,7 +150,18 @@ if [ "$DO_PUSH" -eq 1 ]; then
     exit 4
   fi
 
-  git push "$AUTH_URL" "$FEATURE_BRANCH:refs/heads/$FEATURE_BRANCH" --force-with-lease 2>&1 | tail -3
+  # feature 分支是 rebase 后的改写，远端旧 sha 与本地 remote-tracking 引用可能不一致，
+  # 裸 --force-with-lease 会报 "stale info"。这里显式指定远端当前 sha 作为 lease 基准，
+  # 既能推送 rebase 后的历史，又保留「远端被别人改过就拒绝」的保护。
+  git fetch -q origin 2>/dev/null
+  REMOTE_SHA=$(git ls-remote "$AUTH_URL" "refs/heads/$FEATURE_BRANCH" 2>/dev/null | awk '{print $1}')
+  if [ -n "$REMOTE_SHA" ]; then
+    git push --force-with-lease="$FEATURE_BRANCH:$REMOTE_SHA" \
+      "$AUTH_URL" "$FEATURE_BRANCH:refs/heads/$FEATURE_BRANCH" 2>&1 | tail -3
+  else
+    # 远端还没有这个分支，直接建
+    git push "$AUTH_URL" "$FEATURE_BRANCH:refs/heads/$FEATURE_BRANCH" 2>&1 | tail -3
+  fi
   if [ ${PIPESTATUS[0]} -eq 0 ]; then
     ok "$FEATURE_BRANCH 已推送"
   else

@@ -13,8 +13,20 @@
 set -uo pipefail
 
 REPO_DIR="${REPO_DIR:-/c/Users/Administrator/WorkBuddy/gh-work/ownbox-dev}"
-KOTLINC="${KOTLINC:-/c/Users/Administrator/WorkBuddy/gh-work/kotlinc/kotlinc/bin/kotlinc.bat}"
-PY="${PY:-python3}"
+# 自动定位 kotlinc（便携版），缺失时跳过 Kotlin 检查
+if [ -z "${KOTLINC:-}" ]; then
+  for c in "$(command -v kotlinc 2>/dev/null)" \
+           /c/Users/Administrator/WorkBuddy/gh-work/kotlinc/kotlinc/bin/kotlinc.bat \
+           /c/Users/Administrator/WorkBuddy/gh-work/kotlinc/bin/kotlinc.bat; do
+    [ -n "$c" ] && [ -f "$c" ] && { KOTLINC="$c"; break; }
+  done
+fi
+if [ -z "${PY:-}" ]; then
+  for c in python3 python; do
+    if command -v "$c" >/dev/null 2>&1; then PY="$c"; break; fi
+  done
+fi
+: "${PY:=python3}"
 
 cd "$REPO_DIR" || exit 1
 FAIL=0
