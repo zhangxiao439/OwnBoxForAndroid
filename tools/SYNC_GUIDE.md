@@ -115,6 +115,29 @@ git rebase --continue                # 重复直到完成
 # 想放弃重来：git rebase --abort
 ```
 
+冲突标记长这样（`HEAD` 是上游的新内容，下面是你的）：
+
+```xml
+<<<<<<< HEAD
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_pink_ssr_v2</item>
+=======
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_pink_ssr_own</item>
+>>>>>>> 96ab044 (你的 commit)
+```
+
+**在 themes.xml 里解决冲突的原则**：同一个 `<style>` 内的不同 `<item>` 各留一份，
+只有**同名同属性**的才需要二选一——这时通常保留上游的取值，
+或按你的主题设计意图取舍。
+
+> **实测参考（已演练验证）**：
+> - 上游在 `Theme.SagerNet.Pink_SSR` 里加 `windowLightStatusBar`，
+>   你在同一 style 里已有 `cardElevatedSurfaceColor` → git **零冲突自动合并**，两行并存。
+> - 双方都改 `cardElevatedSurfaceColor` 的**属性值** → 产生冲突，
+>   标记如上，手工二选一即可。
+>
+> 结论：**上游和你的改动只要不在同一个 item 上，就不会冲突**。
+> 而你的移植改动集中在「新增 style」和「新增独立 item」，天然低冲突。
+
 ### 同步后重新构建
 
 冲突解决完、校验通过后：
