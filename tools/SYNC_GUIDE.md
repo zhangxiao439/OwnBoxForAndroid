@@ -82,9 +82,12 @@ app/src/main/res/values/themes.xml
 
 ```bash
 cd /c/Users/Administrator/WorkBuddy/gh-work/ownbox-dev
-export GITHUB_TOKEN=<你的 token>     # 推送必需
 ./tools/sync.sh
 ```
+
+> **token 不用手动传了**：已存到 `~/.workbuddy/secrets/github_token.sh`，
+> 脚本会自动加载；同时 git 凭据（`~/.git-credentials`）也已配置，
+> `git push` 直接可用。token 若过期或需更换，改那个文件即可。
 
 脚本依次执行：
 
@@ -98,6 +101,7 @@ export GITHUB_TOKEN=<你的 token>     # 推送必需
 其他用法：
 
 ```bash
+./tools/sync.sh --help       # 看用法
 ./tools/sync.sh --no-push    # 只同步+校验，不推送
 ./tools/sync.sh --no-build   # 同步但不触发云端构建
 ```
@@ -190,6 +194,10 @@ python3 tools/fetch_apk.py feature/throne-theme
   - 上游新增的 `AppearanceSettingsFragment.kt` → 在
   - 上游新增的 `actionButtonStyle` / `toolbarNavigationButtonStyle` → 在
 - ✅ 静态校验 4 项全过
+- ✅ 已推送到 `zhangxiao439/OwnBoxForAndroid`：
+  - `main` = `e1957e1`（与上游完全一致）
+  - `feature/throne-theme` = `372fabe`（上游最新 + 你的 10 个功能文件 + 4 个工具文件）
+- ✅ 云端构建 `libcore` job（Go + NDK 编译）**通过**
 - ⚠️ 上游把外观设置重构到了独立的 `AppearanceSettingsFragment`，
   但你的 `ColorPickerPreference` 改动挂的仍是同一个 `appTheme` 入口 → **不受影响**
 

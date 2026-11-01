@@ -35,6 +35,17 @@ if [ -z "${PY:-}" ]; then
 fi
 : "${PY:=python3}"
 
+# 自动加载已保存的 token（无需每次手动 export）
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+  for f in "$HOME/.workbuddy/secrets/github_token.sh" \
+           "$HOME/.github_token"; do
+    if [ -f "$f" ]; then
+      . "$f" 2>/dev/null
+      [ -n "${GITHUB_TOKEN:-}" ] && break
+    fi
+  done
+fi
+
 if [ -z "${KOTLINC:-}" ]; then
   for c in "$(command -v kotlinc 2>/dev/null)" \
            /c/Users/Administrator/WorkBuddy/gh-work/kotlinc/kotlinc/bin/kotlinc.bat \
@@ -50,7 +61,10 @@ for arg in "$@"; do
   case "$arg" in
     --no-push)  DO_PUSH=0 ;;
     --no-build) DO_BUILD=0 ;;
-    *) echo "未知参数: $arg"; exit 1 ;;
+    -h|--help)
+      sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0 ;;
+    *) echo "未知参数: $arg（用 --help 查看用法）"; exit 1 ;;
   esac
 done
 
