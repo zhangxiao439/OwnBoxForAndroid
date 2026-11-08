@@ -118,7 +118,9 @@ jobs:
             ./gradlew app:assemblePreviewRelease -Pandroid.injected.build.abi="$ABI"
           fi
 
-          APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk' | head -n 1)
+          # 定位产物：注入 abi 时会改变输出目录结构（apk/preview/release →
+          # apk/previewRelease 等），用全树查找兜底
+          APK=$(find app/build/outputs -name '*.apk' 2>/dev/null | grep -v intermediates | head -n 1)
           if [ -n "$APK" ]; then
             APK_DIR=$(dirname "$APK")
           else
