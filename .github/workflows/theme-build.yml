@@ -97,6 +97,10 @@ jobs:
       - name: Gradle Build
         env:
           BUILD_PLUGIN: none
+          # assets.sh 的 get_latest_release 会调用 GitHub API 兜底；
+          # 未认证时共享 runner IP 极易 403，导致版本号为空并退到不稳定的
+          # releases/latest/download 路径。注入 token 使 API 可靠。
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
