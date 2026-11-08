@@ -112,7 +112,8 @@ THIRD_PARTY_PREFIX = (
 )
 
 # 已知来自第三方库（AAR）内部的资源 —— 项目内查不到，但构建时能解析。
-# 依据：androidx.preference:preference-ktx:1.2.0 的 AAR 自带这些资源。
+# 依据：androidx.preference:preference:1.2.0 的 AAR（Google Maven）自带这些资源，
+# 已下载 AAR 逐项核对（res/values/values.xml）。
 KNOWN_EXTERNAL = {
     ("layout", "image_frame"),
     ("style", "PreferenceCategoryTitleTextStyle"),
@@ -120,6 +121,10 @@ KNOWN_EXTERNAL = {
     ("style", "Preference.Material"),
     ("style", "Preference.Material.Title"),
     ("style", "Preference.Material.Summary"),
+    ("style", "Preference.Category"),
+    ("style", "Preference.Category.Material"),
+    ("style", "Preference.SwitchPreferenceCompat"),
+    ("style", "Preference.SwitchPreferenceCompat.Material"),
 }
 
 def collect_refs(txt):
@@ -149,7 +154,8 @@ for f in targets:
         base = name.split(".")[-1] if "." in name else name
         if any(name.startswith(p) or base.startswith(p) for p in THIRD_PARTY_PREFIX):
             continue
-        if (kind, base) in KNOWN_EXTERNAL:
+        # 白名单同时支持全名与末段匹配（全名精确优先）
+        if (kind, name) in KNOWN_EXTERNAL or (kind, base) in KNOWN_EXTERNAL:
             continue
         if base in defined.get(kind, set()):
             continue
@@ -196,11 +202,15 @@ BUILTIN = re.compile(
     r'Preference\.|PreferenceCategoryTitleTextStyle|PreferenceSummaryTextStyle|)'
 )
 
-# 第三方库（AAR）内部定义的样式
+# 第三方库（AAR）内部定义的样式（androidx.preference:1.2.0 已核对）
 EXTERNAL_STYLES = {
     "PreferenceCategoryTitleTextStyle",
     "PreferenceSummaryTextStyle",
     "Preference.Material",
+    "Preference.Category",
+    "Preference.Category.Material",
+    "Preference.SwitchPreferenceCompat",
+    "Preference.SwitchPreferenceCompat.Material",
 }
 
 missing = []
@@ -234,7 +244,8 @@ elif [ ! -f "$KOTLINC" ]; then
   warn "未找到 kotlinc ($KOTLINC)，跳过 Kotlin 检查"
   warn "如需检查请下载: https://github.com/JetBrains/kotlin/releases/download/v1.9.24/kotlin-compiler-1.9.24.zip"
 else
-  TMPOUT=$(mktemp -d)
+  # 用 POSIX 路径建临时目录，避免 Windows 盘符路径触发安全删除钩子
+  TMPOUT=$(TMPDIR=/tmp mktemp -d)
   # 缺 Android SDK 时会产生大量 unresolved reference，需过滤。
   # 「overrides nothing」/「variable expected」也是缺 SDK 的连带错误：
   #   无法解析 RecyclerView.Adapter / View.OnClickListener 等父类型，
