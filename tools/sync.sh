@@ -92,6 +92,8 @@ ok "待同步提交数（相对 origin/main）: $COMMITS"
 
 # ------------------------------------------------- 2. 重置 main 镜像上游
 say "2/5 让 fork 的 main 镜像上游 main"
+# 先记录自己的分支与旧 main 的分叉点（历史重写时重建补丁需要它）
+FORK_POINT=$(git merge-base "$FEATURE_BRANCH" main 2>/dev/null || true)
 git checkout -q main
 git reset --hard upstream/main
 # 注意：不能在已 checkout 的分支上用 `git branch -f`（会报
@@ -105,7 +107,44 @@ git checkout -q "$FEATURE_BRANCH" 2>/dev/null || git checkout -q -b "$FEATURE_BR
 
 if git diff --quiet upstream/main HEAD; then
   warn "分支与上游无差异，跳过 rebase"
+elif ! git merge-base "$FEATURE_BRANCH" upstream/main >/dev/null 2>&1; then
+  # ---- 上游历史重写（与 upstream/main 无共同祖先）----
+  # 裸 rebase 会试图重放整条旧历史（数百个提交），必须改为
+  # 「净差异补丁 + 三方合并」：只把自己的改动搬到新基线上。
+  warn "检测到上游历史重写（无共同祖先），改用补丁重建模式"
+  BACKUP="backup/$(date +%Y%m%d-%H%M%S)-prerewrite"
+  git branch "$BACKUP" HEAD 2>/dev/null && ok "已备份到分支 $BACKUP"
+  if [ -z "$FORK_POINT" ]; then
+    err "找不到与旧 main 的分叉点，无法生成净差异补丁"
+    echo "  请手动确认自己的改动基点后重试；备份分支: $BACKUP"
+    exit 2
+  fi
+  PATCH="$BACKUP-changes.patch"
+  git diff "$FORK_POINT" "$FEATURE_BRANCH" > "$PATCH"
+  ok "净差异补丁: $PATCH（分叉点 ${FORK_POINT:0:8}）"
+  git checkout -q -B "$FEATURE_BRANCH" upstream/main
+  if git apply -3 "$PATCH"; then
+    ok "补丁已干净应用到新上游，自动提交"
+    git add -A
+    git commit -q -m "feat: reapply own changes onto rewritten upstream ($(date +%F))"
+    ok "已重建 $FEATURE_BRANCH（$(git rev-parse --short HEAD)）"
+  else
+    err "补丁应用存在冲突！"
+    echo ""
+    echo "  冲突文件："
+    git diff --name-only --diff-filter=U | sed 's/^/    /'
+    echo ""
+    echo "  解决步骤："
+    echo "    1) 编辑冲突文件，去掉 <<<<<<< / ======= / >>>>>>> 标记，"
+    echo "       语义通用项取上游取值，自有功能保留自己的实现"
+    echo "    2) git add <文件> && git commit"
+    echo "    3) 重新执行 ./sync.sh 继续（会从校验步骤接着走）"
+    echo "  想放弃：git checkout -q -B $FEATURE_BRANCH $BACKUP"
+    echo ""
+    exit 2
+  fi
 else
+  # ---- 常规增量更新：直接 rebase ----
   # rebase 前先备份，出问题可回退
   BACKUP="backup/$(date +%Y%m%d-%H%M%S)"
   git branch "$BACKUP" HEAD 2>/dev/null && ok "已备份到分支 $BACKUP"
