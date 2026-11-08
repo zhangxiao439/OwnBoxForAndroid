@@ -47,6 +47,11 @@
     <color name="card_elevated_yellow">#2C2A17</color>
     <color name="card_elevated_black">#151515</color>
     <color name="card_elevated_verdant_mint">#10241C</color>
+    <color name="card_elevated_wine">#2B1B21</color>
+    <color name="card_elevated_rose_gold">#2B2023</color>
+    <color name="card_elevated_navy">#1A2034</color>
+    <color name="card_elevated_forest">#17241B</color>
+    <color name="card_elevated_terracotta">#2A1E19</color>
 
     <!-- 纯黑主题在深色模式下的颜色映射 -->
     <color name="color_ng_black_accent">#FFFFFF</color>

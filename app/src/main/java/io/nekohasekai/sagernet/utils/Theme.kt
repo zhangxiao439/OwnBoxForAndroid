@@ -39,12 +39,18 @@ object Theme {
     const val VERDANT_MINT = 22
     const val WHITE = 23
     const val LIGHT_GRAY = 24
+    // 精选扩展色相（本 fork 新增）
+    const val WINE = 25
+    const val ROSE_GOLD = 26
+    const val NAVY = 27
+    const val FOREST = 28
+    const val TERRACOTTA = 29
     const val CUSTOM = 99
 
     private fun defaultTheme() = LIGHT_GRAY
 
     fun isValidTheme(themeId: Int): Boolean {
-        return themeId in MONET..LIGHT_GRAY || themeId == CUSTOM
+        return themeId in MONET..TERRACOTTA || themeId == CUSTOM
     }
 
     fun getClosestThemeForColor(color: Int): Int {
@@ -150,6 +156,11 @@ object Theme {
             VERDANT_MINT -> R.style.Theme_SagerNet_VerdantMint
             WHITE -> R.style.Theme_SagerNet_White
             LIGHT_GRAY -> R.style.Theme_SagerNet_LightGray
+            WINE -> R.style.Theme_SagerNet_Wine
+            ROSE_GOLD -> R.style.Theme_SagerNet_RoseGold
+            NAVY -> R.style.Theme_SagerNet_Navy
+            FOREST -> R.style.Theme_SagerNet_Forest
+            TERRACOTTA -> R.style.Theme_SagerNet_Terracotta
             else -> R.style.Theme_SagerNet_LightGray
         }
     }
@@ -182,6 +193,11 @@ object Theme {
             VERDANT_MINT -> R.style.Theme_SagerNet_Dialog_VerdantMint
             WHITE -> R.style.Theme_SagerNet_Dialog_White
             LIGHT_GRAY -> R.style.Theme_SagerNet_Dialog_LightGray
+            WINE -> R.style.Theme_SagerNet_Dialog_Wine
+            ROSE_GOLD -> R.style.Theme_SagerNet_Dialog_RoseGold
+            NAVY -> R.style.Theme_SagerNet_Dialog_Navy
+            FOREST -> R.style.Theme_SagerNet_Dialog_Forest
+            TERRACOTTA -> R.style.Theme_SagerNet_Dialog_Terracotta
             else -> R.style.Theme_SagerNet_Dialog_LightGray
         }
     }

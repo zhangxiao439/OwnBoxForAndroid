@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -50,72 +51,40 @@ class ColorPickerPreference @JvmOverloads constructor(
         val subtitle: String? = null
     )
 
-    companion object {
-
-        /**
-         * 各色相主题的标识色，与 res/values/themes.xml 中各 Theme.SagerNet.* 的
-         * colorPrimary 取值保持一致，用于选择器中的色块预览。
-         */
-        private val THEME_COLORS: Map<Int, Int> = mapOf(
-            Theme.RED to Color.parseColor("#F44336"),
-            Theme.PINK to Color.parseColor("#E91E63"),
-            Theme.PINK_SSR to Color.parseColor("#FB7299"),
-            Theme.PURPLE to Color.parseColor("#9C27B0"),
-            Theme.DEEP_PURPLE to Color.parseColor("#673AB7"),
-            Theme.INDIGO to Color.parseColor("#3F51B5"),
-            Theme.BLUE to Color.parseColor("#2196F3"),
-            Theme.LIGHT_BLUE to Color.parseColor("#03A9F4"),
-            Theme.CYAN to Color.parseColor("#00BCD4"),
-            Theme.TEAL to Color.parseColor("#009688"),
-            Theme.GREEN to Color.parseColor("#4CAF50"),
-            Theme.LIGHT_GREEN to Color.parseColor("#8BC34A"),
-            Theme.LIME to Color.parseColor("#CDDC39"),
-            Theme.YELLOW to Color.parseColor("#FFEB3B"),
-            Theme.AMBER to Color.parseColor("#FFC107"),
-            Theme.ORANGE to Color.parseColor("#FF9800"),
-            Theme.DEEP_ORANGE to Color.parseColor("#FF5722"),
-            Theme.BROWN to Color.parseColor("#795548"),
-            Theme.GREY to Color.parseColor("#9E9E9E"),
-            Theme.BLUE_GREY to Color.parseColor("#607D8B"),
-            Theme.VERDANT_MINT to Color.parseColor("#00B96B"),
-            Theme.BLACK to Color.BLACK,
-            Theme.WHITE to Color.WHITE,
-            Theme.LIGHT_GRAY to Color.parseColor("#F5F5F7")
-        )
-
-        private fun colorOf(themeId: Int): Int = THEME_COLORS[themeId] ?: Color.GRAY
-
-        /** OwnBox 自有的三套基础主题 */
-        private val BASE_THEMES = listOf(
-            PresetTheme(Theme.BLACK, "纯黑 (AMOLED Black)", Color.BLACK, "纯黑底色 #000000 · 极致省电高对比"),
-            PresetTheme(Theme.WHITE, "纯白 (Pure White)", Color.WHITE, "纯白底色 #FFFFFF · 极简黑白高反差"),
-            PresetTheme(Theme.LIGHT_GRAY, "浅灰 (Light Gray)", Color.parseColor("#F5F5F7"), "柔灰底色 #F5F5F7 · 优雅层次悬浮感")
-        )
-
-        /** 移植自 ThroneForAndroid 的完整色相主题 */
-        private val HUE_THEMES = listOf(
-            PresetTheme(Theme.RED, "红色 (Red)", colorOf(Theme.RED), "#F44336 · Material Red"),
-            PresetTheme(Theme.PINK, "玫红 (Pink)", colorOf(Theme.PINK), "#E91E63 · Material Pink"),
-            PresetTheme(Theme.PINK_SSR, "蜜桃粉 (Pink SSR)", colorOf(Theme.PINK_SSR), "#FB7299 · 经典 SagerNet 主色"),
-            PresetTheme(Theme.PURPLE, "紫色 (Purple)", colorOf(Theme.PURPLE), "#9C27B0 · Material Purple"),
-            PresetTheme(Theme.DEEP_PURPLE, "深紫 (Deep Purple)", colorOf(Theme.DEEP_PURPLE), "#673AB7 · Material Deep Purple"),
-            PresetTheme(Theme.INDIGO, "靛蓝 (Indigo)", colorOf(Theme.INDIGO), "#3F51B5 · Material Indigo"),
-            PresetTheme(Theme.BLUE, "蓝色 (Blue)", colorOf(Theme.BLUE), "#2196F3 · Material Blue"),
-            PresetTheme(Theme.LIGHT_BLUE, "亮蓝 (Light Blue)", colorOf(Theme.LIGHT_BLUE), "#03A9F4 · Material Light Blue"),
-            PresetTheme(Theme.CYAN, "青色 (Cyan)", colorOf(Theme.CYAN), "#00BCD4 · Material Cyan"),
-            PresetTheme(Theme.TEAL, "蓝绿 (Teal)", colorOf(Theme.TEAL), "#009688 · Material Teal"),
-            PresetTheme(Theme.GREEN, "绿色 (Green)", colorOf(Theme.GREEN), "#4CAF50 · Material Green"),
-            PresetTheme(Theme.LIGHT_GREEN, "浅绿 (Light Green)", colorOf(Theme.LIGHT_GREEN), "#8BC34A · Material Light Green"),
-            PresetTheme(Theme.LIME, "青柠 (Lime)", colorOf(Theme.LIME), "#CDDC39 · Material Lime"),
-            PresetTheme(Theme.YELLOW, "明黄 (Yellow)", colorOf(Theme.YELLOW), "#FFEB3B · Material Yellow"),
-            PresetTheme(Theme.AMBER, "琥珀 (Amber)", colorOf(Theme.AMBER), "#FFC107 · Material Amber"),
-            PresetTheme(Theme.ORANGE, "橙色 (Orange)", colorOf(Theme.ORANGE), "#FF9800 · Material Orange"),
-            PresetTheme(Theme.DEEP_ORANGE, "深橙 (Deep Orange)", colorOf(Theme.DEEP_ORANGE), "#FF5722 · Material Deep Orange"),
-            PresetTheme(Theme.BROWN, "棕色 (Brown)", colorOf(Theme.BROWN), "#795548 · Material Brown"),
-            PresetTheme(Theme.GREY, "灰色 (Grey)", colorOf(Theme.GREY), "#9E9E9E · Material Grey"),
-            PresetTheme(Theme.BLUE_GREY, "蓝灰 (Blue Grey)", colorOf(Theme.BLUE_GREY), "#607D8B · Material Blue Grey"),
-            PresetTheme(Theme.VERDANT_MINT, "薄荷绿 (Verdant Mint)", colorOf(Theme.VERDANT_MINT), "#00B96B · Throne 专属配色")
-        )
+    private fun resolveSwatchColor(themeId: Int): Int {
+        return when (themeId) {
+            Theme.BLACK -> Color.BLACK
+            Theme.WHITE -> Color.WHITE
+            Theme.LIGHT_GRAY -> Color.parseColor("#F5F5F7")
+            Theme.MONET -> Theme.getSystemWallpaperColor(context) ?: Color.parseColor("#3664E8")
+            Theme.VERDANT_MINT -> Color.parseColor("#00B96B")
+            Theme.BLUE -> Color.parseColor("#2196F3")
+            Theme.INDIGO -> Color.parseColor("#3F51B5")
+            Theme.LIGHT_BLUE -> Color.parseColor("#03A9F4")
+            Theme.CYAN -> Color.parseColor("#00BCD4")
+            Theme.TEAL -> Color.parseColor("#009688")
+            Theme.GREEN -> Color.parseColor("#4CAF50")
+            Theme.LIGHT_GREEN -> Color.parseColor("#8BC34A")
+            Theme.LIME -> Color.parseColor("#CDDC39")
+            Theme.YELLOW -> Color.parseColor("#FFEB3B")
+            Theme.AMBER -> Color.parseColor("#FFC107")
+            Theme.ORANGE -> Color.parseColor("#FF9800")
+            Theme.DEEP_ORANGE -> Color.parseColor("#FF5722")
+            Theme.RED -> Color.parseColor("#F44336")
+            Theme.PINK_SSR -> Color.parseColor("#FB7299")
+            Theme.PINK -> Color.parseColor("#E91E63")
+            Theme.PURPLE -> Color.parseColor("#9C27B0")
+            Theme.DEEP_PURPLE -> Color.parseColor("#673AB7")
+            Theme.BROWN -> Color.parseColor("#795548")
+            Theme.BLUE_GREY -> Color.parseColor("#607D8B")
+            Theme.GREY -> Color.parseColor("#9E9E9E")
+            Theme.WINE -> Color.parseColor("#8E2C48")
+            Theme.ROSE_GOLD -> Color.parseColor("#B76E79")
+            Theme.NAVY -> Color.parseColor("#1E3A8A")
+            Theme.FOREST -> Color.parseColor("#14532D")
+            Theme.TERRACOTTA -> Color.parseColor("#C05A3A")
+            else -> context.getColorAttr(R.attr.colorPrimary)
+        }
     }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
@@ -128,9 +97,7 @@ class ColorPickerPreference @JvmOverloads constructor(
             Theme.isBlackTheme(context) -> Color.BLACK
             Theme.isWhiteTheme(context) -> Color.WHITE
             Theme.isLightGrayTheme(context) -> Color.parseColor("#F5F5F7")
-            DataStore.appTheme == Theme.MONET ->
-                Theme.getSystemWallpaperColor(context) ?: Color.parseColor("#3664E8")
-            else -> colorOf(DataStore.appTheme)
+            else -> resolveSwatchColor(DataStore.appTheme)
         }
 
         val factor = context.resources.displayMetrics.density
@@ -198,11 +165,7 @@ class ColorPickerPreference @JvmOverloads constructor(
             addView(rootLayout)
         }
 
-        val currentThemeId = if (!Theme.isValidTheme(DataStore.appTheme)) {
-            Theme.LIGHT_GRAY
-        } else {
-            DataStore.appTheme
-        }
+        val currentThemeId = DataStore.appTheme
 
         fun applyTheme(themeId: Int) {
             persistInt(themeId)
@@ -220,98 +183,192 @@ class ColorPickerPreference @JvmOverloads constructor(
             }
         }
 
-        fun addSectionTitle(text: String) {
-            rootLayout.addView(TextView(context).apply {
-                this.text = text
-                textSize = 13f
-                setTextColor(context.getColorAttr(R.attr.primaryOrTextSecondary))
-                setTypeface(null, Typeface.BOLD)
-                setPadding(dp2px(4), dp2px(4), 0, dp2px(8))
-            })
+        // 1. Core Base Themes Section
+        val baseTitle = TextView(context).apply {
+            text = "核心基础规范主题"
+            textSize = 13f
+            setTextColor(context.getColorAttr(R.attr.primaryOrTextSecondary))
+            setTypeface(null, Typeface.BOLD)
+            setPadding(dp2px(4), dp2px(4), 0, dp2px(8))
         }
+        rootLayout.addView(baseTitle)
 
-        fun addThemeCards(themes: List<PresetTheme>) {
-            for (preset in themes) {
-                val isSelected = currentThemeId == preset.id
-                val card = MaterialCardView(context).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 0, dp2px(8))
-                    }
-                    radius = dp2px(12).toFloat()
-                    cardElevation = 0f
-                    strokeWidth = if (isSelected) dp2px(2) else dp2px(1)
-                    strokeColor = if (isSelected) context.getColorAttr(R.attr.colorPrimary) else Color.parseColor("#25888888")
-                    setCardBackgroundColor(if (isSelected) Color.parseColor("#0F2196F3") else Color.TRANSPARENT)
-                    isClickable = true
-                    isFocusable = true
-                    setOnClickListener {
-                        applyTheme(preset.id)
-                    }
-
-                    val row = LinearLayout(context).apply {
-                        orientation = LinearLayout.HORIZONTAL
-                        gravity = Gravity.CENTER_VERTICAL
-                        setPadding(dp2px(12), dp2px(10), dp2px(12), dp2px(10))
-
-                        val iv = ImageView(context).apply {
-                            val sz = dp2px(36)
-                            layoutParams = LinearLayout.LayoutParams(sz, sz).apply {
-                                marginEnd = dp2px(12)
-                            }
-                            setImageDrawable(getColorBadgeDrawable(context.resources, preset.color, isSelected))
-                        }
-                        addView(iv)
-
-                        val textCol = LinearLayout(context).apply {
-                            orientation = LinearLayout.VERTICAL
-                            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-
-                            val titleView = TextView(context).apply {
-                                text = preset.name
-                                textSize = 14f
-                                setTypeface(null, if (isSelected) Typeface.BOLD else Typeface.NORMAL)
-                                setTextColor(context.getColorAttr(android.R.attr.textColorPrimary))
-                            }
-                            addView(titleView)
-
-                            val subtitleView = TextView(context).apply {
-                                text = preset.subtitle
-                                textSize = 11.5f
-                                setTextColor(context.getColorAttr(android.R.attr.textColorSecondary))
-                                setPadding(0, dp2px(2), 0, 0)
-                            }
-                            addView(subtitleView)
-                        }
-                        addView(textCol)
-                    }
-                    addView(row)
-                }
-                rootLayout.addView(card)
-            }
-        }
-
-        // 1. OwnBox 基础主题（纯黑 / 纯白 / 浅灰 + 莫奈动态取色）
-        addSectionTitle("OwnBox 基础主题")
-        addThemeCards(BASE_THEMES)
+        val baseThemes = mutableListOf(
+            PresetTheme(Theme.BLACK, "纯黑 (AMOLED Black)", Color.BLACK, "纯黑底色 #000000 · 极致省电高对比"),
+            PresetTheme(Theme.WHITE, "纯白 (Pure White)", Color.WHITE, "纯白底色 #FFFFFF · 极简黑白高反差"),
+            PresetTheme(Theme.LIGHT_GRAY, "浅灰 (Light Gray)", Color.parseColor("#F5F5F7"), "柔灰底色 #F5F5F7 · 优雅层次悬浮感")
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            addThemeCards(
-                listOf(
-                    PresetTheme(
-                        Theme.MONET,
-                        "莫奈动态取色 (Material You)",
-                        Theme.getSystemWallpaperColor(context) ?: Color.parseColor("#3664E8"),
-                        "Android 12+ 自动跟随系统壁纸主题色"
-                    )
+            baseThemes.add(
+                PresetTheme(
+                    Theme.MONET,
+                    "莫奈动态取色 (Material You)",
+                    resolveSwatchColor(Theme.MONET),
+                    "Android 12+ 自动跟随系统壁纸主题色"
                 )
             )
         }
 
-        // 2. 色相主题（移植自 ThroneForAndroid）
-        addSectionTitle("色相主题 (Throne 移植)")
-        addThemeCards(HUE_THEMES)
+        for (base in baseThemes) {
+            val isSelected = currentThemeId == base.id
+            val card = MaterialCardView(context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    setMargins(0, 0, 0, dp2px(8))
+                }
+                radius = dp2px(12).toFloat()
+                cardElevation = 0f
+                strokeWidth = if (isSelected) dp2px(2) else dp2px(1)
+                strokeColor = if (isSelected) context.getColorAttr(R.attr.colorPrimary) else Color.parseColor("#25888888")
+                setCardBackgroundColor(if (isSelected) Color.parseColor("#0F2196F3") else Color.TRANSPARENT)
+                isClickable = true
+                isFocusable = true
+                setOnClickListener {
+                    applyTheme(base.id)
+                }
+
+                val row = LinearLayout(context).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_VERTICAL
+                    setPadding(dp2px(12), dp2px(10), dp2px(12), dp2px(10))
+
+                    val iv = ImageView(context).apply {
+                        val sz = dp2px(36)
+                        layoutParams = LinearLayout.LayoutParams(sz, sz).apply {
+                            marginEnd = dp2px(12)
+                        }
+                        setImageDrawable(getColorBadgeDrawable(context.resources, base.color, isSelected))
+                    }
+                    addView(iv)
+
+                    val textCol = LinearLayout(context).apply {
+                        orientation = LinearLayout.VERTICAL
+                        layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+
+                        val titleView = TextView(context).apply {
+                            text = base.name
+                            textSize = 14f
+                            setTypeface(null, if (isSelected) Typeface.BOLD else Typeface.NORMAL)
+                            setTextColor(context.getColorAttr(android.R.attr.textColorPrimary))
+                        }
+                        addView(titleView)
+
+                        val subtitleView = TextView(context).apply {
+                            text = base.subtitle
+                            textSize = 11.5f
+                            setTextColor(context.getColorAttr(android.R.attr.textColorSecondary))
+                            setPadding(0, dp2px(2), 0, 0)
+                        }
+                        addView(subtitleView)
+                    }
+                    addView(textCol)
+                }
+                addView(row)
+            }
+            rootLayout.addView(card)
+        }
+
+        // 2. Colorful Material Themes Section
+        val colorTitle = TextView(context).apply {
+            text = "精选多彩主题"
+            textSize = 13f
+            setTextColor(context.getColorAttr(R.attr.primaryOrTextSecondary))
+            setTypeface(null, Typeface.BOLD)
+            setPadding(dp2px(4), dp2px(10), 0, dp2px(8))
+        }
+        rootLayout.addView(colorTitle)
+
+        val colorThemes = listOf(
+            // 精选扩展色相（本 fork 新增）
+            PresetTheme(Theme.WINE, "酒红色", resolveSwatchColor(Theme.WINE)),
+            PresetTheme(Theme.ROSE_GOLD, "玫瑰金", resolveSwatchColor(Theme.ROSE_GOLD)),
+            PresetTheme(Theme.NAVY, "海军蓝", resolveSwatchColor(Theme.NAVY)),
+            PresetTheme(Theme.FOREST, "墨绿色", resolveSwatchColor(Theme.FOREST)),
+            PresetTheme(Theme.TERRACOTTA, "赤陶色", resolveSwatchColor(Theme.TERRACOTTA)),
+            // 上游精选色相
+            PresetTheme(Theme.VERDANT_MINT, "薄荷绿", resolveSwatchColor(Theme.VERDANT_MINT)),
+            PresetTheme(Theme.BLUE, "经典蓝", resolveSwatchColor(Theme.BLUE)),
+            PresetTheme(Theme.INDIGO, "靛青蓝", resolveSwatchColor(Theme.INDIGO)),
+            PresetTheme(Theme.LIGHT_BLUE, "天际蓝", resolveSwatchColor(Theme.LIGHT_BLUE)),
+            PresetTheme(Theme.CYAN, "青碧色", resolveSwatchColor(Theme.CYAN)),
+            PresetTheme(Theme.TEAL, "水鸭青", resolveSwatchColor(Theme.TEAL)),
+            PresetTheme(Theme.GREEN, "森林绿", resolveSwatchColor(Theme.GREEN)),
+            PresetTheme(Theme.LIGHT_GREEN, "嫩芽绿", resolveSwatchColor(Theme.LIGHT_GREEN)),
+            PresetTheme(Theme.LIME, "青柠绿", resolveSwatchColor(Theme.LIME)),
+            PresetTheme(Theme.DEEP_PURPLE, "深邃紫", resolveSwatchColor(Theme.DEEP_PURPLE)),
+            PresetTheme(Theme.PURPLE, "罗兰紫", resolveSwatchColor(Theme.PURPLE)),
+            PresetTheme(Theme.PINK_SSR, "樱花粉", resolveSwatchColor(Theme.PINK_SSR)),
+            PresetTheme(Theme.PINK, "玫红粉", resolveSwatchColor(Theme.PINK)),
+            PresetTheme(Theme.RED, "绯炎红", resolveSwatchColor(Theme.RED)),
+            PresetTheme(Theme.DEEP_ORANGE, "珊瑚橙", resolveSwatchColor(Theme.DEEP_ORANGE)),
+            PresetTheme(Theme.ORANGE, "活力橙", resolveSwatchColor(Theme.ORANGE)),
+            PresetTheme(Theme.AMBER, "琥珀金", resolveSwatchColor(Theme.AMBER)),
+            PresetTheme(Theme.YELLOW, "明黄色", resolveSwatchColor(Theme.YELLOW)),
+            PresetTheme(Theme.BROWN, "摩卡棕", resolveSwatchColor(Theme.BROWN)),
+            PresetTheme(Theme.BLUE_GREY, "蓝调灰", resolveSwatchColor(Theme.BLUE_GREY)),
+            PresetTheme(Theme.GREY, "极简灰", resolveSwatchColor(Theme.GREY))
+        )
+
+        val grid = GridLayout(context).apply {
+            columnCount = 3
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        for (preset in colorThemes) {
+            val isSelected = currentThemeId == preset.id
+            val itemCard = MaterialCardView(context).apply {
+                layoutParams = GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    setMargins(dp2px(4), dp2px(4), dp2px(4), dp2px(4))
+                }
+                radius = dp2px(10).toFloat()
+                cardElevation = 0f
+                strokeWidth = if (isSelected) dp2px(2) else dp2px(1)
+                strokeColor = if (isSelected) preset.color else Color.parseColor("#22888888")
+                setCardBackgroundColor(
+                    if (isSelected) ColorUtils.setAlphaComponent(preset.color, 24)
+                    else Color.TRANSPARENT
+                )
+                isClickable = true
+                isFocusable = true
+                setOnClickListener {
+                    applyTheme(preset.id)
+                }
+
+                val col = LinearLayout(context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER
+                    setPadding(dp2px(8), dp2px(10), dp2px(8), dp2px(10))
+
+                    val swatch = ImageView(context).apply {
+                        val sz = dp2px(32)
+                        layoutParams = LinearLayout.LayoutParams(sz, sz)
+                        setImageDrawable(getColorBadgeDrawable(context.resources, preset.color, isSelected))
+                    }
+                    addView(swatch)
+
+                    val label = TextView(context).apply {
+                        text = preset.name
+                        textSize = 12f
+                        gravity = Gravity.CENTER
+                        setTypeface(null, if (isSelected) Typeface.BOLD else Typeface.NORMAL)
+                        setTextColor(context.getColorAttr(android.R.attr.textColorPrimary))
+                        setPadding(0, dp2px(6), 0, 0)
+                    }
+                    addView(label)
+                }
+                addView(col)
+            }
+            grid.addView(itemCard)
+        }
+        rootLayout.addView(grid)
 
         dialog = MaterialAlertDialogBuilder(context)
             .setTitle(title)

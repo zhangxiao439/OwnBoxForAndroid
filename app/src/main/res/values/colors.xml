@@ -281,6 +281,86 @@
     <color name="material_yellow_accent_400">#FFEA00</color>
     <color name="material_yellow_accent_700">#FFD600</color>
 
+    <!-- 精选扩展色相：酒红 (Wine) -->
+    <color name="material_wine_50">#FBF2F5</color>
+    <color name="material_wine_100">#F4DCE4</color>
+    <color name="material_wine_200">#E7B3C4</color>
+    <color name="material_wine_300">#D68BA2</color>
+    <color name="material_wine_400">#BE5F7C</color>
+    <color name="material_wine_500">#8E2C48</color>
+    <color name="material_wine_600">#7C243C</color>
+    <color name="material_wine_700">#691D31</color>
+    <color name="material_wine_800">#551627</color>
+    <color name="material_wine_900">#420F1D</color>
+    <color name="material_wine_accent_100">#E39BB0</color>
+    <color name="material_wine_accent_200">#D77A95</color>
+    <color name="material_wine_accent_400">#B94E6B</color>
+    <color name="material_wine_accent_700">#9E3A55</color>
+
+    <!-- 精选扩展色相：玫瑰金 (Rose Gold) -->
+    <color name="material_rose_gold_50">#FDF5F6</color>
+    <color name="material_rose_gold_100">#FAE7EA</color>
+    <color name="material_rose_gold_200">#F2CBD2</color>
+    <color name="material_rose_gold_300">#E6A9B3</color>
+    <color name="material_rose_gold_400">#D08A96</color>
+    <color name="material_rose_gold_500">#B76E79</color>
+    <color name="material_rose_gold_600">#A15F69</color>
+    <color name="material_rose_gold_700">#8A5059</color>
+    <color name="material_rose_gold_800">#71414A</color>
+    <color name="material_rose_gold_900">#58323A</color>
+    <color name="material_rose_gold_accent_100">#EBBBC3</color>
+    <color name="material_rose_gold_accent_200">#DE9EA8</color>
+    <color name="material_rose_gold_accent_400">#C87F8C</color>
+    <color name="material_rose_gold_accent_700">#AA6070</color>
+
+    <!-- 精选扩展色相：海军蓝 (Navy) -->
+    <color name="material_navy_50">#F1F4FC</color>
+    <color name="material_navy_100">#DEE6F8</color>
+    <color name="material_navy_200">#B9C7EE</color>
+    <color name="material_navy_300">#92A5E3</color>
+    <color name="material_navy_400">#647ED4</color>
+    <color name="material_navy_500">#1E3A8A</color>
+    <color name="material_navy_600">#1A3278</color>
+    <color name="material_navy_700">#162A64</color>
+    <color name="material_navy_800">#122251</color>
+    <color name="material_navy_900">#0E1A3D</color>
+    <color name="material_navy_accent_100">#A0B3EC</color>
+    <color name="material_navy_accent_200">#8098E4</color>
+    <color name="material_navy_accent_400">#526FD0</color>
+    <color name="material_navy_accent_700">#304EA8</color>
+
+    <!-- 精选扩展色相：墨绿 (Forest) -->
+    <color name="material_forest_50">#F1F7F3</color>
+    <color name="material_forest_100">#DEF0E5</color>
+    <color name="material_forest_200">#BADFC9</color>
+    <color name="material_forest_300">#92CAA8</color>
+    <color name="material_forest_400">#62B183</color>
+    <color name="material_forest_500">#14532D</color>
+    <color name="material_forest_600">#114929</color>
+    <color name="material_forest_700">#0E3E23</color>
+    <color name="material_forest_800">#0B331C</color>
+    <color name="material_forest_900">#082615</color>
+    <color name="material_forest_accent_100">#93D1AC</color>
+    <color name="material_forest_accent_200">#70BF90</color>
+    <color name="material_forest_accent_400">#43A26D</color>
+    <color name="material_forest_accent_700">#217B4C</color>
+
+    <!-- 精选扩展色相：赤陶 (Terracotta) -->
+    <color name="material_terracotta_50">#FDF5F2</color>
+    <color name="material_terracotta_100">#FAE6DE</color>
+    <color name="material_terracotta_200">#F3C8B7</color>
+    <color name="material_terracotta_300">#E8A68D</color>
+    <color name="material_terracotta_400">#D98264</color>
+    <color name="material_terracotta_500">#C05A3A</color>
+    <color name="material_terracotta_600">#AA4E31</color>
+    <color name="material_terracotta_700">#91422A</color>
+    <color name="material_terracotta_800">#773622</color>
+    <color name="material_terracotta_900">#5C2A1A</color>
+    <color name="material_terracotta_accent_100">#F0A68C</color>
+    <color name="material_terracotta_accent_200">#E78163</color>
+    <color name="material_terracotta_accent_400">#D56040</color>
+    <color name="material_terracotta_accent_700">#B54B2C</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
@@ -345,6 +425,11 @@
     <color name="card_elevated_yellow">#FFFDEF</color>
     <color name="card_elevated_black">#EEEEEE</color>
     <color name="card_elevated_verdant_mint">#EBF9F3</color>
+    <color name="card_elevated_wine">#FCF3F6</color>
+    <color name="card_elevated_rose_gold">#FDF4F6</color>
+    <color name="card_elevated_navy">#F2F5FC</color>
+    <color name="card_elevated_forest">#F2F8F4</color>
+    <color name="card_elevated_terracotta">#FDF5F1</color>
 
     <color name="app_icon_red_background">#BC0000</color>
 

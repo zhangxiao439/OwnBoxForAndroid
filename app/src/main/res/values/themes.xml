@@ -919,6 +919,52 @@
         <item name="cardElevatedSurfaceColor">@color/card_elevated_verdant_mint</item>
     </style>
 
+    <!-- 精选扩展色相主题 -->
+    <style name="Theme.SagerNet.Wine" parent="Theme.SagerNet">
+        <item name="colorPrimary">@color/material_wine_500</item>
+        <item name="colorPrimaryDark">@color/material_wine_700</item>
+        <item name="colorAccent">@color/material_wine_accent_200</item>
+        <item name="colorMaterial100">@color/material_wine_100</item>
+        <item name="colorMaterial300">@color/material_wine_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_wine</item>
+    </style>
+
+    <style name="Theme.SagerNet.RoseGold" parent="Theme.SagerNet">
+        <item name="colorPrimary">@color/material_rose_gold_500</item>
+        <item name="colorPrimaryDark">@color/material_rose_gold_700</item>
+        <item name="colorAccent">@color/material_rose_gold_accent_200</item>
+        <item name="colorMaterial100">@color/material_rose_gold_100</item>
+        <item name="colorMaterial300">@color/material_rose_gold_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_rose_gold</item>
+    </style>
+
+    <style name="Theme.SagerNet.Navy" parent="Theme.SagerNet">
+        <item name="colorPrimary">@color/material_navy_500</item>
+        <item name="colorPrimaryDark">@color/material_navy_700</item>
+        <item name="colorAccent">@color/material_navy_accent_200</item>
+        <item name="colorMaterial100">@color/material_navy_100</item>
+        <item name="colorMaterial300">@color/material_navy_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_navy</item>
+    </style>
+
+    <style name="Theme.SagerNet.Forest" parent="Theme.SagerNet">
+        <item name="colorPrimary">@color/material_forest_500</item>
+        <item name="colorPrimaryDark">@color/material_forest_700</item>
+        <item name="colorAccent">@color/material_forest_accent_200</item>
+        <item name="colorMaterial100">@color/material_forest_100</item>
+        <item name="colorMaterial300">@color/material_forest_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_forest</item>
+    </style>
+
+    <style name="Theme.SagerNet.Terracotta" parent="Theme.SagerNet">
+        <item name="colorPrimary">@color/material_terracotta_500</item>
+        <item name="colorPrimaryDark">@color/material_terracotta_700</item>
+        <item name="colorAccent">@color/material_terracotta_accent_200</item>
+        <item name="colorMaterial100">@color/material_terracotta_100</item>
+        <item name="colorMaterial300">@color/material_terracotta_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_terracotta</item>
+    </style>
+
     <style name="Theme.SagerNet.White" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/color_white_theme_accent</item>
         <item name="colorPrimaryDark">@color/color_white_theme_primary_dark</item>
@@ -1009,6 +1055,52 @@
         <item name="colorMaterial100">@color/color_verdant_mint_100</item>
         <item name="colorMaterial300">@color/color_verdant_mint_300</item>
         <item name="cardElevatedSurfaceColor">@color/card_elevated_verdant_mint</item>
+    </style>
+
+    <!-- 精选扩展色相主题（对话框） -->
+    <style name="Theme.SagerNet.Dialog.Wine" parent="Theme.SagerNet.Dialog">
+        <item name="colorPrimary">@color/material_wine_500</item>
+        <item name="colorPrimaryDark">@color/material_wine_700</item>
+        <item name="colorAccent">@color/material_wine_accent_200</item>
+        <item name="colorMaterial100">@color/material_wine_100</item>
+        <item name="colorMaterial300">@color/material_wine_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_wine</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.RoseGold" parent="Theme.SagerNet.Dialog">
+        <item name="colorPrimary">@color/material_rose_gold_500</item>
+        <item name="colorPrimaryDark">@color/material_rose_gold_700</item>
+        <item name="colorAccent">@color/material_rose_gold_accent_200</item>
+        <item name="colorMaterial100">@color/material_rose_gold_100</item>
+        <item name="colorMaterial300">@color/material_rose_gold_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_rose_gold</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Navy" parent="Theme.SagerNet.Dialog">
+        <item name="colorPrimary">@color/material_navy_500</item>
+        <item name="colorPrimaryDark">@color/material_navy_700</item>
+        <item name="colorAccent">@color/material_navy_accent_200</item>
+        <item name="colorMaterial100">@color/material_navy_100</item>
+        <item name="colorMaterial300">@color/material_navy_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_navy</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Forest" parent="Theme.SagerNet.Dialog">
+        <item name="colorPrimary">@color/material_forest_500</item>
+        <item name="colorPrimaryDark">@color/material_forest_700</item>
+        <item name="colorAccent">@color/material_forest_accent_200</item>
+        <item name="colorMaterial100">@color/material_forest_100</item>
+        <item name="colorMaterial300">@color/material_forest_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_forest</item>
+    </style>
+
+    <style name="Theme.SagerNet.Dialog.Terracotta" parent="Theme.SagerNet.Dialog">
+        <item name="colorPrimary">@color/material_terracotta_500</item>
+        <item name="colorPrimaryDark">@color/material_terracotta_700</item>
+        <item name="colorAccent">@color/material_terracotta_accent_200</item>
+        <item name="colorMaterial100">@color/material_terracotta_100</item>
+        <item name="colorMaterial300">@color/material_terracotta_300</item>
+        <item name="cardElevatedSurfaceColor">@color/card_elevated_terracotta</item>
     </style>
 
     <style name="Theme.SagerNet.Dialog.White" parent="Theme.SagerNet.Dialog">

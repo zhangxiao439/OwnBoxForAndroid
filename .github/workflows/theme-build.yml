@@ -8,6 +8,11 @@ on:
       - main
       - feature/throne-theme
   workflow_dispatch:
+    inputs:
+      abi:
+        description: "ABI 过滤：arm64-v8a / armeabi-v7a / x86 / x86_64 / all"
+        required: false
+        default: "arm64-v8a"
 
 permissions:
   contents: read
@@ -100,7 +105,14 @@ jobs:
           echo "ALIAS_PASS=ownboxtemp" >> local.properties
 
           ./run init action gradle
-          ./gradlew app:assemblePreviewRelease
+          # 默认只出 arm64-v8a（push 触发时 inputs 为空）；手动触发可传 abi=all 出全量
+          ABI="${{ inputs.abi }}"
+          [ -z "$ABI" ] && ABI="arm64-v8a"
+          if [ "$ABI" = "all" ]; then
+            ./gradlew app:assemblePreviewRelease
+          else
+            ./gradlew app:assemblePreviewRelease -Pandroid.injected.build.abi="$ABI"
+          fi
 
           APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk' | head -n 1)
           if [ -n "$APK" ]; then
