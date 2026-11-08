@@ -12,4 +12,6 @@
     <attr name="whiteOrTextPrimary" format="color" />
     <!-- 立体卡片（路由/分组）的"色调提升表面色"，各主题变体朝自身 primary 染色 -->
     <attr name="cardElevatedSurfaceColor" format="color" />
+    <!-- 对话框按钮文字色：白天用 primaryOrTextPrimary，夜间改用更浅的色调以保证可读 -->
+    <attr name="dialogButtonColor" format="color" />
 </resources>

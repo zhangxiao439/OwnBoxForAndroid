@@ -171,7 +171,8 @@ object Theme {
             LIGHT_GREEN -> R.style.Theme_SagerNet_Dialog_LightGreen
             LIME -> R.style.Theme_SagerNet_Dialog_Lime
             YELLOW -> R.style.Theme_SagerNet_Dialog_Yellow
-            AMBER -> R.style.Theme_SagerNet_Amber
+            // 修复上游笔误：dialog 主题误映射到非 dialog style
+            AMBER -> R.style.Theme_SagerNet_Dialog_Amber
             ORANGE -> R.style.Theme_SagerNet_Dialog_Orange
             DEEP_ORANGE -> R.style.Theme_SagerNet_Dialog_DeepOrange
             BROWN -> R.style.Theme_SagerNet_Dialog_Brown
