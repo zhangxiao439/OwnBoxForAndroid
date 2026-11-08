@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       abi:
-        description: "ABI 过滤：arm64-v8a / armeabi-v7a / x86 / x86_64 / all"
+        description: "ABI 过滤：all（全量，默认）/ arm64-v8a / armeabi-v7a / x86 / x86_64"
         required: false
-        default: "arm64-v8a"
+        default: "all"
 
 permissions:
   contents: read
@@ -109,18 +109,21 @@ jobs:
           echo "ALIAS_PASS=ownboxtemp" >> local.properties
 
           ./run init action gradle
-          # 默认只出 arm64-v8a（push 触发时 inputs 为空）；手动触发可传 abi=all 出全量
+          # 默认全量 4 ABI（push 触发时 inputs 为空）；手动触发可传 abi=arm64-v8a 等单 ABI
           ABI="${{ inputs.abi }}"
-          [ -z "$ABI" ] && ABI="arm64-v8a"
+          [ -z "$ABI" ] && ABI="all"
           if [ "$ABI" = "all" ]; then
             ./gradlew app:assemblePreviewRelease
           else
             ./gradlew app:assemblePreviewRelease -Pandroid.injected.build.abi="$ABI"
           fi
 
-          # 定位产物：注入 abi 时会改变输出目录结构（apk/preview/release →
-          # apk/previewRelease 等），用全树查找兜底
-          APK=$(find app/build/outputs -name '*.apk' 2>/dev/null | grep -v intermediates | head -n 1)
+          # 定位产物：优先 arm64-v8a，找不到再退回全树任意 apk
+          # （注入单 abi 时会改变输出目录结构，故不能写死路径）
+          APK=$(find app/build/outputs -name '*arm64-v8a*.apk' 2>/dev/null | grep -v intermediates | head -n 1)
+          if [ -z "$APK" ]; then
+            APK=$(find app/build/outputs -name '*.apk' 2>/dev/null | grep -v intermediates | head -n 1)
+          fi
           if [ -n "$APK" ]; then
             APK_DIR=$(dirname "$APK")
           else
