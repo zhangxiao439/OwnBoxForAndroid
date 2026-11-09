@@ -80,15 +80,31 @@ jobs:
         with:
           name: libcore-aar
           path: app/libs
-      - name: Generate temporary keystore
+      - name: Prepare keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE }}
+          KS_PASS_SECRET: ${{ secrets.KEYSTORE_PASSWORD }}
+          KS_ALIAS_SECRET: ${{ secrets.KEY_ALIAS }}
         run: |
-          keytool -genkeypair -v \
-            -keystore release.keystore \
-            -alias ownbox \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass ownboxtemp -keypass ownboxtemp \
-            -dname "CN=OwnBox, OU=Dev, O=OwnBox, L=NA, ST=NA, C=CN"
-          keytool -list -keystore release.keystore -storepass ownboxtemp
+          # 优先使用 Secrets 里的固定证书：证书稳定才能覆盖安装（升级不丢数据）。
+          # 未配置 Secrets 时退回临时证书，仅用于调试。
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > release.keystore
+            P="$KS_PASS_SECRET"; A="$KS_ALIAS_SECRET"
+            echo "使用 Secrets 中的固定签名证书（支持覆盖安装）"
+          else
+            P=ownboxtemp; A=ownbox
+            keytool -genkeypair -v \
+              -keystore release.keystore \
+              -alias "$A" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$P" -keypass "$P" \
+              -dname "CN=OwnBox, OU=Dev, O=OwnBox, L=NA, ST=NA, C=CN"
+            echo "::warning::未配置 KEYSTORE Secret，本次使用临时证书（无法覆盖安装）"
+          fi
+          echo "KS_PASS=$P" >> $GITHUB_ENV
+          echo "KS_ALIAS=$A" >> $GITHUB_ENV
+          keytool -list -keystore release.keystore -storepass "$P" | tail -3
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -104,9 +120,9 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
-          echo "KEYSTORE_PASS=ownboxtemp" >> local.properties
-          echo "ALIAS_NAME=ownbox" >> local.properties
-          echo "ALIAS_PASS=ownboxtemp" >> local.properties
+          echo "KEYSTORE_PASS=$KS_PASS" >> local.properties
+          echo "ALIAS_NAME=$KS_ALIAS" >> local.properties
+          echo "ALIAS_PASS=$KS_PASS" >> local.properties
 
           ./run init action gradle
           # 默认全量 4 ABI（push 触发时 inputs 为空）；手动触发可传 abi=arm64-v8a 等单 ABI
@@ -142,8 +158,8 @@ jobs:
               if [ -f "$apk" ]; then
                 signed_apk="${apk%-unsigned.apk}-signed.apk"
                 echo "Signing $apk -> $signed_apk"
-                "$APKSIGNER" sign --ks release.keystore --ks-pass pass:ownboxtemp \
-                  --key-pass pass:ownboxtemp --ks-key-alias ownbox \
+                "$APKSIGNER" sign --ks release.keystore --ks-pass "pass:$KS_PASS" \
+                  --key-pass "pass:$KS_PASS" --ks-key-alias "$KS_ALIAS" \
                   --out "$signed_apk" "$apk"
                 rm "$apk"
               fi
